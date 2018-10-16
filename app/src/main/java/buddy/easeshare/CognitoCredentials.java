@@ -1,8 +1,11 @@
 package buddy.easeshare;
 
+import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.auth.CognitoCachingCredentialsProvider;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoDevice;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUser;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserSession;
@@ -11,15 +14,25 @@ import com.amazonaws.mobileconnectors.cognitoidentityprovider.continuations.Auth
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.continuations.ChallengeContinuation;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.continuations.MultiFactorAuthenticationContinuation;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.handlers.AuthenticationHandler;
+import com.amazonaws.regions.Region;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class CognitoCredentials {
 
 
 
-
+    private Regions regions = Regions.US_EAST_1;
     private CognitoUserSession cognitoUserSession;
     private String password , userId;
     private boolean isSuccess = false;
+    private CognitoCachingCredentialsProvider cognitoCachingCredentialsProvider;
+    private Context context;
 
     public boolean ifnotloggedin(CognitoUser cognitoUser , String password , String contact) {
         this.password = password;
@@ -31,10 +44,19 @@ public class CognitoCredentials {
         return isSuccess;
     }
 
-    public CognitoUserSession ifloggedin(CognitoUser cognitoUser) {
+    public void ifloggedin(CognitoUser cognitoUser, Context context) {
+        this.context=context;
         cognitoUser.getSessionInBackground(handler);
 
-        return cognitoUserSession;
+
+        /**String idToken = cognitoUserSession.getIdToken().getJWTToken();
+
+        cognitoCachingCredentialsProvider = new CognitoCachingCredentialsProvider(context, context.getResources().getString(R.string.identityPoolId) ,regions);
+
+        Map<String, String> logins = new HashMap<String, String>();
+        logins.put("cognito-idp.us-east-1.amazonaws.com/us-east-1_R0XOgTtZC", cognitoUserSession.getIdToken().getJWTToken());
+        cognitoCachingCredentialsProvider.setLogins(logins);**/
+
     }
 
     AuthenticationHandler handler = new AuthenticationHandler() {
@@ -44,6 +66,24 @@ public class CognitoCredentials {
             // Time to do awesome stuff
            cognitoUserSession = userSession;
            isSuccess = true;
+
+
+           cognitoCachingCredentialsProvider = new CognitoCachingCredentialsProvider(context, context.getResources().getString(R.string.identityPoolId) ,regions);
+
+           Map<String, String> logins = new HashMap<String, String>();
+           logins.put("cognito-idp.us-east-1.amazonaws.com/us-east-1_R0XOgTtZC", cognitoUserSession.getIdToken().getJWTToken());
+           cognitoCachingCredentialsProvider.setLogins(logins);
+
+
+           //new MainActivity().pass(cognitoCachingCredentialsProvider);
+            /**AmazonS3 s3 =new  AmazonS3Client(cognitoCachingCredentialsProvider);
+            try {
+                s3.deleteBucket("asehare-20181009212357-deployment");
+            } catch (AmazonServiceException e) {
+                System.err.println(e.getErrorMessage());
+                System.exit(1);
+            }**/
+           //Log.d("Hello",cognitoCachingCredentialsProvider.getToken());
 
         }
 
@@ -70,4 +110,6 @@ public class CognitoCredentials {
             isSuccess = false;
         }
     };
+
+
 }

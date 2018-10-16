@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.amazonaws.auth.CognitoCachingCredentialsProvider;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoDevice;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUser;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserPool;
@@ -28,8 +29,8 @@ public class SigninActivity extends AppCompatActivity  {
     private EditText eContact , ePassword;
     private Button signin;
     private CognitoUserPool cognitoUserPool;
-    private CognitoUserSession cognitoUserSession;
     private CognitoUser cognitoUser;
+    private CognitoCachingCredentialsProvider cognitoCachingCredentialsProvider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,8 +55,7 @@ public class SigninActivity extends AppCompatActivity  {
 
         if(cognitoUser != null){
 
-            CognitoCredentials cognitoCredentials =new CognitoCredentials();
-            cognitoUserSession = cognitoCredentials.ifloggedin(cognitoUser);
+            new CognitoCredentials().ifloggedin(cognitoUser,getApplicationContext());
             Intent gotoMain = new Intent(SigninActivity.this,MainActivity.class);
             startActivity(gotoMain);
 

@@ -3,6 +3,7 @@
     <string name="title_activity_login">LoginActivity</string>
     <string name="userPoolId">us-east-1_R0XOgTtZC</string>
     <string name="clientId">12494rg38ns3gqgqllh5g6j31</string>
+    <string name="identityPoolId">us-east-1:011bed58-1f15-4e1e-bde1-a19c7795c4ed</string>
     <string name="clientSecret">1n62p5imi08s84f0f01m57o6iv4qok8hin38d58caf04ao1845rj</string>
     <string name="cognitoRegion">us-east-1</string>
     <string name="title_activity_signin">SigninActivity</string>
