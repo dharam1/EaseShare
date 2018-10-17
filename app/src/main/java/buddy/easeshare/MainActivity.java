@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
             //Log.d("Hello D",cognitoCachingCredentialsProvider.toString());
             cognitoUserPool = new CognitoConfig().userPool(getApplicationContext());
             cognitoUser = cognitoUserPool.getCurrentUser();
-            new S3Upload().upload(cognitoUser,getApplicationContext(),bitmap);
+            new S3Upload().upload(cognitoUser,getApplicationContext(),bitmap,MainActivity.this);
 
             //imgTakenPic.setImageBitmap(bitmap);
         }
@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void response(String result){
         //Log.d("Dharam",result);
-        imgTakenPic.setImageBitmap(bitmap);
+
+        //imgTakenPic.setImageBitmap(bitmap);
     }
 }
